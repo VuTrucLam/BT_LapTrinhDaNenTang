@@ -98,54 +98,337 @@
 // });
 
 
-import {View, Text, StyleSheet, Image, ScrollView, FlatList} from 'react-native';
+// import {View, Text, StyleSheet, Image, ScrollView, FlatList} from 'react-native';
+// import {SafeAreaView} from 'react-native-safe-area-context';
+
+// export default function MyApp() {
+//   return (
+//     <SafeAreaView style={styles.container}>
+//       <Image
+//       source={require('../../assets/images/android-icon-background.png')}
+//         style={styles.avatar}
+//       />
+//       <Text style={styles.title}>Thông tin sinh viên</Text>
+//         <FlatList
+//           data={[
+//             { id: '1', name: 'Họ và tên: Vũ Trúc Lam', mssv: 'MSSV: 23103040', class: 'Lớp: CNTT-K23', birthDate: 'Ngày sinh: 12/02/2005', address: 'Địa chỉ: BMT, Đăk Lăk' },
+//             { id: '2', name: 'Họ và tên: Vũ Trúc Lam', mssv: 'MSSV: 23103040', class: 'Lớp: CNTT-K23', birthDate: 'Ngày sinh: 12/02/2005', address: 'Địa chỉ: BMT, Đăk Lăk' },
+//           ]}
+//           renderItem={({ item }) => (
+//             <View style={styles.listItem}>
+//               <Text>{item.name}</Text>
+//               <Text>{item.mssv}</Text>
+//               <Text>{item.class}</Text>
+//               <Text>{item.birthDate}</Text>
+//               <Text>{item.address}</Text>
+//             </View>
+//           )}
+//         />
+
+//     </SafeAreaView>
+//   );
+// }
+
+
+// const styles = StyleSheet.create({
+//   container: {
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     flex: 1,
+//   },
+//   title: {
+//     fontSize: 20,
+//     color: 'blue',
+//     fontWeight: 'bold',
+//   },
+//   avatar: {
+//     width: 100,
+//     height: 100,
+//   },
+//    listItem: {
+//     marginBottom: 10,
+//   },
+// });
+
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 export default function MyApp() {
+  const [name, setName] = useState('');
+  const [mssv, setMssv] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    let newErrors = {};
+
+    if (name.trim() === '') {
+      newErrors.name = 'Họ và tên không được để trống';
+    }
+
+    if (mssv.trim() === '') {
+      newErrors.mssv = 'Mã sinh viên không được để trống';
+    }
+
+    if (email.trim() === '') {
+      newErrors.email = 'Email không được để trống';
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailRegex.test(email)) {
+        newErrors.email = 'Email không hợp lệ';
+      }
+    }
+
+
+    if (phone.trim() === '') {
+      newErrors.phone = 'Số điện thoại không được để trống';
+    }
+
+    if (password.trim() === '') {
+      newErrors.password = 'Mật khẩu không được để trống';
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      Alert.alert(
+        'Thông báo',
+        'Đăng ký thông tin sinh viên thành công!',
+      );
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <Image
-      source={require('../../assets/images/android-icon-background.png')}
-        style={styles.avatar}
-      />
-      <Text style={styles.title}>Thông tin sinh viên</Text>
-        <FlatList
-          data={[
-            { id: '1', name: 'Họ và tên: Vũ Trúc Lam', mssv: 'MSSV: 23103040', class: 'Lớp: CNTT-K23', birthDate: 'Ngày sinh: 12/02/2005', address: 'Địa chỉ: BMT, Đăk Lăk' },
-            { id: '2', name: 'Họ và tên: Vũ Trúc Lam', mssv: 'MSSV: 23103040', class: 'Lớp: CNTT-K23', birthDate: 'Ngày sinh: 12/02/2005', address: 'Địa chỉ: BMT, Đăk Lăk' },
-          ]}
-          renderItem={({ item }) => (
-            <View style={styles.listItem}>
-              <Text>{item.name}</Text>
-              <Text>{item.mssv}</Text>
-              <Text>{item.class}</Text>
-              <Text>{item.birthDate}</Text>
-              <Text>{item.address}</Text>
-            </View>
-          )}
-        />
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
 
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled">
+
+          <Text style={styles.title}>Thông tin sinh viên</Text>
+
+          <Text style={styles.subtitle}>
+            Vui lòng nhập đầy đủ thông tin
+          </Text>
+
+          {/* Họ và tên */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Họ và tên</Text>
+
+            <TextInput
+              style={[
+                styles.input,
+                errors.name && styles.inputError,
+              ]}
+              placeholder="Nhập họ và tên"
+              value={name}
+              onChangeText={setName}
+              autoCapitalize="words"
+            />
+
+            {errors.name && (
+              <Text style={styles.errorText}>
+                {errors.name}
+              </Text>
+            )}
+          </View>
+
+          {/* MSSV */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Mã sinh viên</Text>
+
+            <TextInput
+              style={[
+                styles.input,
+                errors.mssv && styles.inputError,
+              ]}
+              placeholder="Nhập mã sinh viên"
+              value={mssv}
+              onChangeText={setMssv}
+              keyboardType="numeric"
+            />
+
+            {errors.mssv && (
+              <Text style={styles.errorText}>
+                {errors.mssv}
+              </Text>
+            )}
+          </View>
+
+          {/* Email */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Email</Text>
+
+            <TextInput
+              style={[
+                styles.input,
+                errors.email && styles.inputError,
+              ]}
+              placeholder="Nhập email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+
+            {errors.email && (
+              <Text style={styles.errorText}>
+                {errors.email}
+              </Text>
+            )}
+          </View>
+
+          {/* Số điện thoại */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Số điện thoại</Text>
+
+            <TextInput
+              style={[
+                styles.input,
+                errors.phone && styles.inputError,
+              ]}
+              placeholder="Nhập số điện thoại"
+              value={phone}
+              onChangeText={setPhone}
+              keyboardType="phone-pad"
+            />
+
+            {errors.phone && (
+              <Text style={styles.errorText}>
+                {errors.phone}
+              </Text>
+            )}
+          </View>
+
+          {/* Mật khẩu */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Mật khẩu</Text>
+
+            <TextInput
+              style={[
+                styles.input,
+                errors.password && styles.inputError,
+              ]}
+              placeholder="Nhập mật khẩu"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={true}
+            />
+
+            {errors.password && (
+              <Text style={styles.errorText}>
+                {errors.password}
+              </Text>
+            )}
+          </View>
+
+          {/* Button */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={validateForm}>
+
+            <Text style={styles.buttonText}>
+              Xác nhận
+            </Text>
+          </TouchableOpacity>
+
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
-
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    flex: 1,
+    backgroundColor: '#f5f7fb',
+  },
+
+  keyboardView: {
     flex: 1,
   },
+
+  scrollContent: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+
   title: {
-    fontSize: 20,
-    color: 'blue',
+    fontSize: 28,
     fontWeight: 'bold',
+    color: '#1565c0',
+    textAlign: 'center',
+    marginTop: 20,
   },
-  avatar: {
-    width: 100,
-    height: 100,
+
+  subtitle: {
+    fontSize: 15,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 8,
+    marginBottom: 25,
   },
-   listItem: {
-    marginBottom: 10,
+
+  inputGroup: {
+    marginBottom: 18,
+  },
+
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+
+  input: {
+    height: 50,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#d0d7de',
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    fontSize: 16,
+  },
+
+  inputError: {
+    borderColor: 'red',
+  },
+
+  errorText: {
+    color: 'red',
+    fontSize: 13,
+    marginTop: 5,
+  },
+
+  button: {
+    height: 50,
+    backgroundColor: '#1565c0',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+
+  buttonText: {
+    color: '#fff',
+    fontSize: 17,
+    fontWeight: 'bold',
   },
 });
