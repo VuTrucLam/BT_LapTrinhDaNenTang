@@ -98,12 +98,54 @@
 // });
 
 
-import {View, Text} from 'react-native';
+import {View, Text, StyleSheet, Image, ScrollView, FlatList} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 export default function MyApp() {
   return (
-    <View>
-      <Text>Hello, World!</Text>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <Image
+      source={require('../../assets/images/android-icon-background.png')}
+        style={styles.avatar}
+      />
+      <Text style={styles.title}>Thông tin sinh viên</Text>
+        <FlatList
+          data={[
+            { id: '1', name: 'Họ và tên: Vũ Trúc Lam', mssv: 'MSSV: 23103040', class: 'Lớp: CNTT-K23', birthDate: 'Ngày sinh: 12/02/2005', address: 'Địa chỉ: BMT, Đăk Lăk' },
+            { id: '2', name: 'Họ và tên: Vũ Trúc Lam', mssv: 'MSSV: 23103040', class: 'Lớp: CNTT-K23', birthDate: 'Ngày sinh: 12/02/2005', address: 'Địa chỉ: BMT, Đăk Lăk' },
+          ]}
+          renderItem={({ item }) => (
+            <View style={styles.listItem}>
+              <Text>{item.name}</Text>
+              <Text>{item.mssv}</Text>
+              <Text>{item.class}</Text>
+              <Text>{item.birthDate}</Text>
+              <Text>{item.address}</Text>
+            </View>
+          )}
+        />
+
+    </SafeAreaView>
   );
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+  },
+  title: {
+    fontSize: 20,
+    color: 'blue',
+    fontWeight: 'bold',
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+  },
+   listItem: {
+    marginBottom: 10,
+  },
+});
